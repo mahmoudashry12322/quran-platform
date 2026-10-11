@@ -1,0 +1,26 @@
+{
+  "name": "منصة القرآن الكريم",
+  "short_name": "القرآن الكريم",
+  "description": "منصة قرآنية متكاملة بقراءة واضحة، تفاسير، تلاوات بأصوات كبار القراء، وأذكار ومواقيت الصلاة.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#030d14",
+  "theme_color": "#030d14",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

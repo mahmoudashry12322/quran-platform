@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="128" fill="#030d14"/>
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#d4af37" stroke-width="6" opacity="0.3"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#4dd0e1" stroke-width="4" opacity="0.2"/>
+  
+  <!-- Islamic 8-point Star -->
+  <g transform="translate(256, 200)">
+    <rect x="-60" y="-60" width="120" height="120" rx="12" fill="url(#gold)" transform="rotate(0)"/>
+    <rect x="-60" y="-60" width="120" height="120" rx="12" fill="url(#gold)" transform="rotate(45)"/>
+    <circle cx="0" cy="0" r="28" fill="#030d14"/>
+    <polygon points="0,-18 6,-6 18,0 6,6 0,18 -6,6 -18,0 -6,-6" fill="#ffd700"/>
+  </g>
+  
+  <text x="256" y="360" font-family="Amiri, serif" font-size="52" font-weight="bold" fill="#ffd700" text-anchor="middle">القرآن الكريم</text>
+  <text x="256" y="410" font-family="Tajawal, sans-serif" font-size="22" fill="#8bafc4" text-anchor="middle">quran.mahmoudashry.site</text>
+
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#b38f2a"/>
+    </linearGradient>
+  </defs>
+</svg>
