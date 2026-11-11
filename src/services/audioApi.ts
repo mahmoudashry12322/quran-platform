@@ -9,9 +9,20 @@ export interface Reciter {
   style?: string; // e.g. "مرتل" or "مجود"
   audioServerUrl: string; // Base CDN URL for full surah MP3s
   image?: string;
+  availableSurahs?: number[];
 }
 
 export const RECITERS_LIST: Reciter[] = [
+  {
+    id: 'ar.abdulrahmanmossad',
+    quranComId: 7,
+    name: 'الشيخ عبد الرحمن مسعد',
+    englishName: 'Abdul Rahman Mossad',
+    rewaya: 'حفص عن عاصم',
+    style: 'تلاوات خاشعة',
+    audioServerUrl: '/audio/mossad',
+    availableSurahs: [1, 10, 19, 23, 29, 32, 49, 67, 73, 78, 87, 88, 100, 107]
+  },
   {
     id: 'ar.alafasy',
     quranComId: 7,
@@ -197,5 +208,17 @@ export const RECITERS_LIST: Reciter[] = [
 // Helper to construct formatted Surah MP3 stream URL
 export const getSurahAudioUrl = (reciter: Reciter, surahNumber: number): string => {
   const formattedNumber = String(surahNumber).padStart(3, '0');
+
+  // Special handling for Sheikh Abdul Rahman Mossad (recorded selected reverent surahs)
+  if (reciter.id === 'ar.abdulrahmanmossad') {
+    const available = reciter.availableSurahs || [1, 10, 19, 23, 29, 32, 49, 67, 73, 78, 87, 88, 100, 107];
+    if (available.includes(surahNumber)) {
+      return `/audio/mossad/${formattedNumber}.mp3`;
+    }
+    // Fallback to high-quality recitation if specific surah was not recorded by Sheikh Abdul Rahman Mossad
+    return `https://server8.mp3quran.net/afs/${formattedNumber}.mp3`;
+  }
+
   return `${reciter.audioServerUrl}/${formattedNumber}.mp3`;
 };
+

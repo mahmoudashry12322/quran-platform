@@ -77,6 +77,11 @@ export const ReciterCatalogView: React.FC = () => {
                   <span className="px-2.5 py-0.5 rounded-md bg-[#072116] border border-[#d4af37]/20 text-[#d4af37]">
                     النمط: {r.style || 'مرتل'}
                   </span>
+                  {r.availableSurahs && (
+                    <span className="px-2.5 py-0.5 rounded-md bg-[#ffd700]/15 border border-[#ffd700]/30 text-[#ffd700] font-semibold">
+                      {r.availableSurahs.length} سورة مسجلة
+                    </span>
+                  )}
                 </div>
               </div>
 
