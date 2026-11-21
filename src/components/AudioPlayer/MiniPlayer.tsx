@@ -61,7 +61,13 @@ export const MiniPlayer: React.FC = () => {
             <h4 className="font-heading font-bold text-sm text-[#ffd700] truncate group-hover:text-[var(--text-primary)] transition-colors duration-300">
               سورة {currentSurah.name}
             </h4>
-            <p className="text-[11px] text-[var(--text-muted)] truncate">{currentReciter.name}</p>
+            {currentReciter.availableSurahs && !currentReciter.availableSurahs.includes(currentSurah.number) ? (
+              <p className="text-[10px] text-amber-300 truncate font-medium">
+                بديل: مشاري العفاسي (غير مسجلة لـ {currentReciter.name.replace('الشيخ ', '')})
+              </p>
+            ) : (
+              <p className="text-[11px] text-[var(--text-muted)] truncate">{currentReciter.name}</p>
+            )}
           </div>
         </div>
 

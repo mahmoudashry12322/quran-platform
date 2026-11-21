@@ -29,7 +29,7 @@ interface HomeViewProps {
   onSelectSurahForReading: (surahNum: number) => void;
 }
 
-type FilterTab = 'all' | 'meccan' | 'medinan' | 'bookmarks';
+type FilterTab = 'all' | 'meccan' | 'medinan' | 'bookmarks' | 'reciter';
 type ViewMode = 'list' | 'grid';
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -77,10 +77,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
       if (activeFilterTab === 'meccan') return s.revelationType === 'Meccan';
       if (activeFilterTab === 'medinan') return s.revelationType === 'Medinan';
       if (activeFilterTab === 'bookmarks') return isBookmarked(s.number, 1);
+      if (activeFilterTab === 'reciter' && currentReciter.availableSurahs) {
+        return currentReciter.availableSurahs.includes(s.number);
+      }
 
       return true;
     });
-  }, [surahList, searchFilter, activeFilterTab, isBookmarked]);
+  }, [surahList, searchFilter, activeFilterTab, isBookmarked, currentReciter]);
 
   const formatTime = (secs: number) => {
     if (isNaN(secs) || !secs) return '00:00';
@@ -100,9 +103,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
       all: surahList.length,
       meccan: surahList.filter((s) => s.revelationType === 'Meccan').length,
       medinan: surahList.filter((s) => s.revelationType === 'Medinan').length,
-      bookmarks: bookmarks.length
+      bookmarks: bookmarks.length,
+      reciter: currentReciter.availableSurahs ? currentReciter.availableSurahs.length : 0
     };
-  }, [surahList, bookmarks]);
+  }, [surahList, bookmarks, currentReciter]);
 
   return (
     <div className="max-w-[1400px] mx-auto px-3 sm:px-6 py-4 sm:py-6">
@@ -334,6 +338,29 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <span className="hidden sm:inline">قراءة</span>
                 </button>
               </div>
+
+              {/* Limited Catalog Notice Banner */}
+              {currentReciter.availableSurahs && !currentReciter.availableSurahs.includes(selectedSurah.number) && (
+                <div className="w-full mt-4 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-right text-xs text-amber-200">
+                  <div className="flex items-center gap-1.5 font-bold mb-1">
+                    <span>⚠️</span>
+                    <span>سورة {selectedSurah.name} غير مسجلة بصوت {currentReciter.name}</span>
+                  </div>
+                  <p className="text-[11px] text-amber-200/80 mb-2 leading-relaxed">
+                    (تلاوات خاشعة مختارة) — يتم التشغيل تلقائياً بصوت الشيخ مشاري العفاسي كبديل.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setActiveFilterTab('reciter');
+                      const first = surahList.find((s) => currentReciter.availableSurahs!.includes(s.number));
+                      if (first) playSurah(first);
+                    }}
+                    className="py-1 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[11px] font-bold border border-amber-500/30 transition-all duration-200 inline-block"
+                  >
+                    عرض تلاوات {currentReciter.name.replace('الشيخ ', '')} ({currentReciter.availableSurahs.length} سورة مسجلة)
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -440,6 +467,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <span>المفضلة</span>
                 <span className="font-mono text-[10px] opacity-80">({counts.bookmarks})</span>
               </button>
+
+              {currentReciter.availableSurahs && (
+                <button
+                  onClick={() => setActiveFilterTab('reciter')}
+                  className={`px-3.5 py-1.5 rounded-xl flex-shrink-0 transition-all duration-300 flex items-center gap-1.5 ${
+                    activeFilterTab === 'reciter'
+                      ? 'bg-gradient-to-r from-[#d4af37] to-[#ffd700] text-[#030d14] font-bold shadow-md'
+                      : 'bg-[#d4af37]/15 text-[#ffd700] hover:bg-[#d4af37]/25 border border-[#d4af37]/30'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#ffd700]" />
+                  <span>تلاوات {currentReciter.name.replace('الشيخ ', '')}</span>
+                  <span className="font-mono text-[10px] opacity-90">({counts.reciter})</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -520,6 +562,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         >
                           {surah.revelationType === 'Meccan' ? 'مكية' : 'مدنية'}
                         </span>
+
+                        {currentReciter.availableSurahs && (
+                          currentReciter.availableSurahs.includes(surah.number) ? (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold flex-shrink-0">
+                              تلاوة مسجلة
+                            </span>
+                          ) : (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-300/80 flex-shrink-0">
+                              بديل (العفاسي)
+                            </span>
+                          )
+                        )}
 
                         {isCurrentPlaying && (
                           <div className="flex items-center gap-0.5 mr-1 h-3.5">
@@ -641,6 +695,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
                       >
                         {surah.revelationType === 'Meccan' ? 'مكية' : 'مدنية'}
                       </span>
+
+                      {currentReciter.availableSurahs && (
+                        currentReciter.availableSurahs.includes(surah.number) ? (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium">
+                            مسجلة
+                          </span>
+                        ) : (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300/80 border border-amber-500/20">
+                            بديل
+                          </span>
+                        )
+                      )}
                     </div>
 
                     {/* Center: Surah Name */}

@@ -127,13 +127,18 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         audio.currentTime = 0;
         audio.play().catch(console.error);
       } else {
-        // Play next surah
-        const list = surahListRef.current;
+        // Play next surah respecting available surahs for reciters with limited catalog
+        const rec = currentReciterRef.current;
+        const fullList = surahListRef.current;
+        const list = rec.availableSurahs
+          ? fullList.filter((s) => rec.availableSurahs!.includes(s.number))
+          : fullList;
+        const effectiveList = list.length > 0 ? list : fullList;
         const cSurah = currentSurahRef.current;
-        if (cSurah && list.length > 0) {
-          const currentIndex = list.findIndex((s) => s.number === cSurah.number);
-          const nextSurah = list[(currentIndex + 1) % list.length];
-          playSurah(nextSurah, currentReciterRef.current);
+        if (cSurah && effectiveList.length > 0) {
+          const currentIndex = effectiveList.findIndex((s) => s.number === cSurah.number);
+          const nextSurah = effectiveList[(currentIndex + 1) % effectiveList.length];
+          playSurah(nextSurah, rec);
         }
       }
     };
@@ -228,21 +233,35 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setReciter = (reciter: Reciter) => {
     setCurrentReciter(reciter);
     if (currentSurah) {
-      playSurah(currentSurah, reciter);
+      // If current surah is not in the reciter's catalog, switch to the first recorded surah (e.g. Al-Fatihah)
+      if (reciter.availableSurahs && !reciter.availableSurahs.includes(currentSurah.number)) {
+        const targetSurah = surahList.find((s) => reciter.availableSurahs!.includes(s.number)) || currentSurah;
+        playSurah(targetSurah, reciter);
+      } else {
+        playSurah(currentSurah, reciter);
+      }
     }
   };
 
   const playNextSurah = () => {
     if (!currentSurah || surahList.length === 0) return;
-    const currentIndex = surahList.findIndex((s) => s.number === currentSurah.number);
-    const nextSurah = surahList[(currentIndex + 1) % surahList.length];
+    const list = currentReciter.availableSurahs
+      ? surahList.filter((s) => currentReciter.availableSurahs!.includes(s.number))
+      : surahList;
+    const effectiveList = list.length > 0 ? list : surahList;
+    const currentIndex = effectiveList.findIndex((s) => s.number === currentSurah.number);
+    const nextSurah = effectiveList[(currentIndex + 1) % effectiveList.length];
     playSurah(nextSurah);
   };
 
   const playPrevSurah = () => {
     if (!currentSurah || surahList.length === 0) return;
-    const currentIndex = surahList.findIndex((s) => s.number === currentSurah.number);
-    const prevSurah = surahList[(currentIndex - 1 + surahList.length) % surahList.length];
+    const list = currentReciter.availableSurahs
+      ? surahList.filter((s) => currentReciter.availableSurahs!.includes(s.number))
+      : surahList;
+    const effectiveList = list.length > 0 ? list : surahList;
+    const currentIndex = effectiveList.findIndex((s) => s.number === currentSurah.number);
+    const prevSurah = effectiveList[(currentIndex - 1 + effectiveList.length) % effectiveList.length];
     playSurah(prevSurah);
   };
 

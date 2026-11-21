@@ -160,6 +160,19 @@ export const FullAudioModal: React.FC = () => {
           <p className="text-xs text-[#8bafc4]">
             {currentSurah.revelationType === 'Meccan' ? 'مكية' : 'مدنية'} • {currentSurah.numberOfAyahs} آية
           </p>
+          {currentReciter.availableSurahs && (
+            <div className="mt-2 inline-block">
+              {currentReciter.availableSurahs.includes(currentSurah.number) ? (
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                  ✨ تلاوة مسجلة بصوت {currentReciter.name}
+                </span>
+              ) : (
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 border border-amber-500/30 text-amber-300">
+                  ⚠️ غير مسجلة للقارئ — يتم التشغيل بصوت الشيخ مشاري العفاسي
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {activeAyahNumber && (

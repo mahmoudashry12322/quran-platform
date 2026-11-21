@@ -24,6 +24,16 @@ export const RECITERS_LIST: Reciter[] = [
     availableSurahs: [1, 10, 19, 23, 29, 32, 49, 67, 73, 78, 87, 88, 100, 107]
   },
   {
+    id: 'ar.sherifmostafa',
+    quranComId: 21,
+    name: 'الشيخ شريف مصطفى',
+    englishName: 'Sherif Mostafa',
+    rewaya: 'حفص عن عاصم',
+    style: 'تلاوات خاشعة',
+    audioServerUrl: '/audio/sherif',
+    availableSurahs: [1, 13, 15, 18, 19, 20, 31, 32, 53, 55, 56, 57, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 79, 85, 89, 90, 92, 99, 109, 112]
+  },
+  {
     id: 'ar.alafasy',
     quranComId: 7,
     name: 'الشيخ مشاري راشد العفاسي',
@@ -216,6 +226,16 @@ export const getSurahAudioUrl = (reciter: Reciter, surahNumber: number): string 
       return `/audio/mossad/${formattedNumber}.mp3`;
     }
     // Fallback to high-quality recitation if specific surah was not recorded by Sheikh Abdul Rahman Mossad
+    return `https://server8.mp3quran.net/afs/${formattedNumber}.mp3`;
+  }
+
+  // Special handling for Sheikh Sherif Mostafa (recorded selected reverent surahs)
+  if (reciter.id === 'ar.sherifmostafa') {
+    const available = reciter.availableSurahs || [1, 13, 15, 18, 19, 20, 31, 32, 53, 55, 56, 57, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 79, 85, 89, 90, 92, 99, 109, 112];
+    if (available.includes(surahNumber)) {
+      return `/audio/sherif/${formattedNumber}.mp3`;
+    }
+    // Fallback to high-quality recitation if specific surah was not recorded by Sheikh Sherif Mostafa
     return `https://server8.mp3quran.net/afs/${formattedNumber}.mp3`;
   }
 
